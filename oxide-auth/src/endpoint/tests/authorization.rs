@@ -1,4 +1,6 @@
 use std::collections::HashMap;
+use std::vec;
+
 
 use crate::primitives::authorizer::AuthMap;
 use crate::primitives::registrar::{Client, ClientMap, RegisteredUrl};

@@ -1,3 +1,4 @@
+use crate::helper::mock_time_fn_with_delay;
 use crate::primitives::authorizer::{AuthMap, Authorizer};
 use crate::primitives::issuer::TokenMap;
 use crate::primitives::grant::{Grant, Extensions};
@@ -5,6 +6,8 @@ use crate::primitives::registrar::{Client, ClientMap, RegisteredUrl};
 
 use crate::frontends::simple::endpoint::access_token_flow;
 
+use std::prelude::rust_2024::*;
+use std::{vec, format};
 use std::collections::HashMap;
 
 use base64;
@@ -40,7 +43,7 @@ impl AccessTokenSetup {
             owner_id: EXAMPLE_OWNER_ID.to_string(),
             redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
             scope: EXAMPLE_SCOPE.parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         };
 
@@ -75,7 +78,7 @@ impl AccessTokenSetup {
             owner_id: EXAMPLE_OWNER_ID.to_string(),
             redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
             scope: EXAMPLE_SCOPE.parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         };
 
@@ -230,7 +233,7 @@ fn access_equivalent_url() {
         owner_id: EXAMPLE_OWNER_ID.to_string(),
         redirect_uri: REDIRECT_URL.parse().unwrap(),
         scope: EXAMPLE_SCOPE.parse().unwrap(),
-        until: Utc::now() + Duration::hours(1),
+        until: mock_time_fn_with_delay(Duration::hours(1)),
         extensions: Extensions::new(),
     };
 

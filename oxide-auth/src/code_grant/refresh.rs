@@ -1,13 +1,15 @@
 //! Retrieve a refreshed access token.
 use std::borrow::Cow;
 use std::collections::HashMap;
+use std::prelude::rust_2024::*;
+
 
 use chrono::{Duration, Utc};
 
-use crate::code_grant::{
+use crate::{code_grant::{
     accesstoken::TokenResponse,
     error::{AccessTokenError, AccessTokenErrorType},
-};
+}, helper::{mock_time_fn, mock_time_fn_with_delay}};
 use crate::primitives::grant::Grant;
 use crate::primitives::issuer::{RefreshedToken, Issuer};
 use crate::primitives::registrar::{Registrar, RegistrarError};
@@ -461,7 +463,7 @@ fn co_authenticated(scope: Option<Cow<str>>, grant: Box<Grant>, token: String) -
 
 fn validate(scope: Option<Cow<str>>, grant: Box<Grant>, token: String) -> Result<RefreshState> {
     // .. is expired, revoked, ... (Section 5.2)
-    if grant.until <= Utc::now() {
+    if grant.until <= mock_time_fn() {
         return Err(Error::invalid(AccessTokenErrorType::InvalidGrant));
     }
 
@@ -491,7 +493,7 @@ fn validate(scope: Option<Cow<str>>, grant: Box<Grant>, token: String) -> Result
     // Update the grant with the derived data.
     let mut grant = grant;
     grant.scope = scope;
-    grant.until = Utc::now() + Duration::hours(1);
+    grant.until = mock_time_fn_with_delay(Duration::hours(1));
 
     Ok(RefreshState::Issuing { grant, token })
 }
@@ -554,7 +556,7 @@ impl BearerToken {
     /// Convert the token into a json string, viable for being sent over a network with
     /// `application/json` encoding.
     pub fn to_json(&self) -> String {
-        let remaining = self.0.until.signed_duration_since(Utc::now());
+        let remaining = self.0.until.signed_duration_since(mock_time_fn());
         let token_response = TokenResponse {
             access_token: Some(self.0.token.clone()),
             refresh_token: self.0.refresh.clone(),

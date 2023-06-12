@@ -1,3 +1,4 @@
+use std::prelude::rust_2024::*;
 use std::borrow::{Borrow, Cow};
 use std::collections::HashMap;
 use std::fmt;

@@ -7,6 +7,7 @@
 //! [`Generic`]: ./struct.Generic.html
 //! [`Endpoint`]: ../../endpoint/trait.Endpoint.html
 
+use std::prelude::rust_2024::*;
 use crate::primitives::authorizer::Authorizer;
 use crate::primitives::issuer::Issuer;
 use crate::primitives::registrar::Registrar;

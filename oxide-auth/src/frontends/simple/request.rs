@@ -1,4 +1,5 @@
 //! Simple, owning request and response types.
+use std::prelude::rust_2024::*;
 use std::marker::PhantomData;
 
 use crate::endpoint::{QueryParameter, WebRequest, WebResponse};

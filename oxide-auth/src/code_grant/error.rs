@@ -2,6 +2,7 @@
 //!
 //! [rfc6749]: https://tools.ietf.org/html/rfc6749#section-6
 
+use std::prelude::rust_2024::*;
 use std::fmt;
 use std::borrow::Cow;
 use std::vec;
@@ -90,7 +91,7 @@ impl AuthorizationError {
 
     /// A uri identifying a resource explaining the error in detail.
     pub fn explain_uri(&mut self, uri: Url) {
-        self.uri = Some(String::from(uri).into())
+        self.uri = Some(uri.to_string().into()) // TODO Verif.
     }
 
     /// Iterate over the key value pairs that describe this error.
@@ -193,7 +194,7 @@ impl AccessTokenError {
 
     /// A uri identifying a resource explaining the error in detail.
     pub fn explain_uri(&mut self, uri: Url) {
-        self.uri = Some(String::from(uri).into())
+        self.uri = Some(uri.to_string().into()) // TODO Verif.
     }
 
     /// Iterate over the key value pairs that describe this error.

@@ -1,4 +1,5 @@
 //! Provides the handling for Authorization Code Requests
+use std::prelude::rust_2024::*;
 use std::borrow::Cow;
 use std::result::Result as StdResult;
 
@@ -6,6 +7,7 @@ use url::Url;
 use chrono::{Duration, Utc};
 
 use crate::code_grant::error::{AuthorizationError, AuthorizationErrorType};
+use crate::helper::mock_time_fn_with_delay;
 use crate::primitives::authorizer::Authorizer;
 use crate::primitives::registrar::{ClientUrl, ExactUrl, Registrar, RegistrarError, PreGrant};
 use crate::primitives::grant::{Extensions, Grant};
@@ -467,7 +469,7 @@ impl Pending {
                 client_id: self.pre_grant.client_id,
                 redirect_uri: self.pre_grant.redirect_uri.into_url(),
                 scope: self.pre_grant.scope,
-                until: Utc::now() + Duration::minutes(10),
+                until: mock_time_fn_with_delay(Duration::minutes(10)),
                 extensions: self.extensions,
             })
             .map_err(|()| Error::PrimitiveError)?;

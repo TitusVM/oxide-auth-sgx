@@ -8,6 +8,7 @@ mod extended;
 mod pkce;
 mod list;
 
+use std::prelude::rust_2024::*;
 use std::borrow::{Cow, ToOwned};
 use std::rc::Rc;
 use std::sync::Arc;

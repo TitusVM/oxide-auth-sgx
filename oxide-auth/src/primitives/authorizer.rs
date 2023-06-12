@@ -5,8 +5,9 @@
 //! to client according to parameters given by the resource owner and the registrar. Upon a client
 //! side request, it will then check the given parameters to determine the authorization of such
 //! clients.
+use std::prelude::rust_2024::*;
 use std::collections::HashMap;
-use std::sync::{MutexGuard, RwLockWriteGuard};
+use std::sync::{SgxMutexGuard, SgxRwLockWriteGuard};
 
 use super::grant::Grant;
 use super::generator::TagGrant;
@@ -71,7 +72,7 @@ impl<A: Authorizer + ?Sized> Authorizer for Box<A> {
     }
 }
 
-impl<'a, A: Authorizer + ?Sized> Authorizer for MutexGuard<'a, A> {
+impl<'a, A: Authorizer + ?Sized> Authorizer for SgxMutexGuard<'a, A> {
     fn authorize(&mut self, grant: Grant) -> Result<String, ()> {
         (**self).authorize(grant)
     }
@@ -81,7 +82,7 @@ impl<'a, A: Authorizer + ?Sized> Authorizer for MutexGuard<'a, A> {
     }
 }
 
-impl<'a, A: Authorizer + ?Sized> Authorizer for RwLockWriteGuard<'a, A> {
+impl<'a, A: Authorizer + ?Sized> Authorizer for SgxRwLockWriteGuard<'a, A> {
     fn authorize(&mut self, grant: Grant) -> Result<String, ()> {
         (**self).authorize(grant)
     }
@@ -113,7 +114,7 @@ impl<I: TagGrant> Authorizer for AuthMap<I> {
 /// Tests for authorizer implementations, including those provided here.
 pub mod tests {
     use super::*;
-    use chrono::Utc;
+    use crate::helper::mock_time_fn;
     use crate::primitives::grant::Extensions;
     use crate::primitives::generator::{Assertion, AssertionKind, RandomGenerator};
 
@@ -126,7 +127,7 @@ pub mod tests {
             client_id: "Client".to_string(),
             scope: "One two three scopes".parse().unwrap(),
             redirect_uri: "https://example.com/redirect_me".parse().unwrap(),
-            until: Utc::now(),
+            until: mock_time_fn(),
             extensions: Extensions::new(),
         };
 

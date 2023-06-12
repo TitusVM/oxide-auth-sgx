@@ -1,4 +1,5 @@
 //! Provides the handling for Access Token Requests
+use std::prelude::rust_2024::*;
 use std::mem;
 use std::borrow::Cow;
 
@@ -7,6 +8,7 @@ use chrono::{Utc, Duration};
 use crate::code_grant::accesstoken::BearerToken;
 use crate::code_grant::error::{AccessTokenError, AccessTokenErrorType};
 use crate::endpoint::{Scope, Solicitation};
+use crate::helper::mock_time_fn_with_delay;
 use crate::primitives::issuer::Issuer;
 use crate::primitives::grant::{Extensions, Grant};
 use crate::primitives::registrar::{Registrar, RegistrarError, BoundClient, PreGrant, ClientUrl};
@@ -405,7 +407,7 @@ impl Pending {
                 client_id: self.pre_grant.client_id,
                 redirect_uri: self.pre_grant.redirect_uri.into_url(),
                 scope: self.pre_grant.scope.clone(),
-                until: Utc::now() + Duration::minutes(10),
+                until: mock_time_fn_with_delay(Duration::minutes(10)),
                 extensions: self.extensions,
             })
             .map_err(|()| Error::Primitive(Box::new(PrimitiveError::empty())))?;

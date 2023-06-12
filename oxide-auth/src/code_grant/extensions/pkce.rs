@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::prelude::rust_2024::*;
 
 use crate::primitives::grant::{GrantExtension, Value};
 

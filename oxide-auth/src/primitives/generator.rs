@@ -14,6 +14,9 @@ use super::grant::{Value, Extensions, Grant};
 use super::{Url, Time};
 use super::scope::Scope;
 
+use std::prelude::rust_2024::*;
+use std::string::ToString;
+use std::vec;
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -21,8 +24,9 @@ use std::sync::Arc;
 use base64::{encode, decode};
 use hmac::{digest::CtOutput, Mac, Hmac};
 use rand::{rngs::OsRng, RngCore, thread_rng};
-use serde::{Deserialize, Serialize};
-use rmp_serde;
+use serde_derive::{Deserialize, Serialize};
+
+use serde_json;
 
 /// Generic token for a specific grant.
 ///
@@ -81,6 +85,8 @@ impl RandomGenerator {
 /// The actual generator is given by a `TaggedAssertion` from `Assertion::tag` which enables
 /// signing the same grant for different uses, i.e. separating authorization from bearer grants and
 /// refresh tokens.
+
+#[allow(bare_trait_objects)]
 pub struct Assertion {
     hasher: Hmac<sha2::Sha256>,
 }
@@ -92,7 +98,7 @@ pub enum AssertionKind {
     ///
     /// [HMAC]: https://tools.ietf.org/html/rfc2104
     /// [SHA256]: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
-    HmacSha256,
+    HmacSha256, 
 }
 
 #[derive(Serialize, Deserialize)]
@@ -163,14 +169,14 @@ impl Assertion {
 
     fn extract<'a>(&self, token: &'a str) -> Result<(Grant, String), ()> {
         let decoded = decode(token).map_err(|_| ())?;
-        let assertion: AssertGrant = rmp_serde::from_slice(&decoded).map_err(|_| ())?;
+        let assertion: AssertGrant = serde_json::from_slice(&decoded).map_err(|_| ())?;
 
         let mut hasher = self.hasher.clone();
         hasher.update(&assertion.0);
         hasher.verify_slice(assertion.1.as_slice()).map_err(|_| ())?;
 
         let (_, serde_grant, tag): (u64, SerdeAssertionGrant, String) =
-            rmp_serde::from_slice(&assertion.0).map_err(|_| ())?;
+        serde_json::from_slice(&assertion.0).map_err(|_| ())?;
 
         Ok((serde_grant.grant(), tag))
     }
@@ -183,18 +189,18 @@ impl Assertion {
 
     fn counted_signature(&self, counter: u64, grant: &Grant) -> Result<String, ()> {
         let serde_grant = SerdeAssertionGrant::try_from(grant)?;
-        let tosign = rmp_serde::to_vec(&(serde_grant, counter)).unwrap();
+        let tosign = serde_json::to_vec(&(serde_grant, counter)).unwrap();
         let signature = self.signature(&tosign);
         Ok(base64::encode(&signature.into_bytes()))
     }
 
     fn generate_tagged(&self, counter: u64, grant: &Grant, tag: &str) -> Result<String, ()> {
         let serde_grant = SerdeAssertionGrant::try_from(grant)?;
-        let tosign = rmp_serde::to_vec(&(counter, serde_grant, tag)).unwrap();
+        let tosign = serde_json::to_vec(&(counter, serde_grant, tag)).unwrap();
         let signature = self.signature(&tosign);
         let assert = AssertGrant(tosign, signature.into_bytes().to_vec());
 
-        Ok(encode(&rmp_serde::to_vec(&assert).unwrap()))
+        Ok(encode(&serde_json::to_vec(&assert).unwrap()))
     }
 }
 
@@ -283,6 +289,7 @@ impl TagGrant for Arc<Assertion> {
 
 mod scope_serde {
     use crate::primitives::scope::Scope;
+    use std::string::ToString;
 
     use serde::ser::{Serializer};
     use serde::de::{Deserialize, Deserializer, Error};
@@ -299,6 +306,7 @@ mod scope_serde {
 
 mod url_serde {
     use super::Url;
+    use std::string::ToString;
 
     use serde::ser::{Serializer};
     use serde::de::{Deserialize, Deserializer, Error};

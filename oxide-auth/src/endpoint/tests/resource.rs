@@ -1,3 +1,5 @@
+use std::prelude::rust_2024::*;
+use crate::helper::mock_time_fn_with_delay;
 use crate::primitives::issuer::TokenMap;
 use crate::primitives::generator::RandomGenerator;
 use crate::primitives::grant::{Grant, Extensions};
@@ -31,7 +33,7 @@ impl ResourceSetup {
                 owner_id: EXAMPLE_OWNER_ID.to_string(),
                 redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
                 scope: "legit needed andmore".parse().unwrap(),
-                until: Utc::now() + Duration::hours(1),
+                until: mock_time_fn_with_delay(Duration::hours(1)),
                 extensions: Extensions::new(),
             })
             .unwrap();
@@ -42,7 +44,7 @@ impl ResourceSetup {
                 owner_id: EXAMPLE_OWNER_ID.to_string(),
                 redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
                 scope: "wrong needed".parse().unwrap(),
-                until: Utc::now() + Duration::hours(1),
+                until: mock_time_fn_with_delay(Duration::hours(1)),
                 extensions: Extensions::new(),
             })
             .unwrap();
@@ -53,7 +55,7 @@ impl ResourceSetup {
                 owner_id: EXAMPLE_OWNER_ID.to_string(),
                 redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
                 scope: "legit".parse().unwrap(),
-                until: Utc::now() + Duration::hours(1),
+                until: mock_time_fn_with_delay(Duration::hours(1)),
                 extensions: Extensions::new(),
             })
             .unwrap();

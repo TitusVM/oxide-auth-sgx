@@ -1,3 +1,6 @@
+use std::prelude::rust_2024::*;
+use std::{format, vec};
+use crate::helper::mock_time_fn_with_delay;
 use crate::primitives::issuer::{Issuer, IssuedToken, RefreshedToken, TokenMap, TokenType};
 use crate::primitives::generator::RandomGenerator;
 use crate::primitives::grant::{Grant, Extensions};
@@ -43,7 +46,7 @@ impl RefreshTokenSetup {
             owner_id: EXAMPLE_OWNER_ID.to_string(),
             redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
             scope: EXAMPLE_SCOPE.parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         };
 
@@ -80,7 +83,7 @@ impl RefreshTokenSetup {
             owner_id: EXAMPLE_OWNER_ID.to_string(),
             redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
             scope: EXAMPLE_SCOPE.parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         };
 
@@ -114,7 +117,7 @@ impl RefreshTokenSetup {
         RefreshedToken {
             token: body.access_token.expect("Expected a token"),
             refresh: body.refresh_token,
-            until: Utc::now() + Duration::seconds(duration),
+            until: mock_time_fn_with_delay(Duration::seconds(duration)),
             token_type: TokenType::Bearer,
         }
     }

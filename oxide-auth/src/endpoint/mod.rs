@@ -39,6 +39,7 @@ mod query;
 #[cfg(test)]
 mod tests;
 
+use std::prelude::rust_2024::*;
 use std::borrow::Cow;
 use std::marker::PhantomData;
 

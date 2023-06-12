@@ -2,6 +2,7 @@
 use super::{Url, Time};
 use super::scope::Scope;
 
+use std::prelude::rust_2024::*;
 use std::borrow::{Cow, ToOwned};
 use std::collections::HashMap;
 use std::collections::hash_map::Iter;

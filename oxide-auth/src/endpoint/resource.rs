@@ -1,3 +1,4 @@
+use std::prelude::rust_2024::*;
 use std::borrow::Cow;
 
 use crate::code_grant::resource::{

@@ -1,13 +1,16 @@
 //! Provides the handling for Access Token Requests
+use std::prelude::rust_2024::*;
 use std::mem;
 use std::borrow::Cow;
 use std::collections::HashMap;
 
-use chrono::Utc;
-use serde::{Deserialize, Serialize};
+//use chrono::Utc;
+use serde_derive::{Deserialize, Serialize};
+
 use serde_json;
 
 use crate::code_grant::error::{AccessTokenError, AccessTokenErrorType};
+use crate::helper::mock_time_fn;
 use crate::primitives::authorizer::Authorizer;
 use crate::primitives::issuer::{IssuedToken, Issuer};
 use crate::primitives::grant::{Extensions, Grant};
@@ -389,7 +392,7 @@ impl AccessToken {
             return Err(Error::invalid_with(AccessTokenErrorType::InvalidGrant));
         }
 
-        if saved_params.until < Utc::now() {
+        if saved_params.until < mock_time_fn() {
             return Err(Error::invalid_with(AccessTokenErrorType::InvalidGrant));
         }
 
@@ -654,7 +657,7 @@ impl BearerToken {
     /// Convert the token into a json string, viable for being sent over a network with
     /// `application/json` encoding.
     pub fn to_json(&self) -> String {
-        let remaining = self.0.until.signed_duration_since(Utc::now());
+        let remaining = self.0.until.signed_duration_since(mock_time_fn());
         let token_response = TokenResponse {
             access_token: Some(self.0.token.clone()),
             refresh_token: self.0.refresh.clone(),
@@ -679,7 +682,7 @@ mod tests {
             IssuedToken {
                 token: "access".into(),
                 refresh: Some("refresh".into()),
-                until: Utc::now(),
+                until: mock_time_fn(),
                 token_type: TokenType::Bearer,
             },
             "scope".parse().unwrap(),
@@ -698,7 +701,7 @@ mod tests {
     #[test]
     fn no_refresh_encoding() {
         let token = BearerToken(
-            IssuedToken::without_refresh("access".into(), Utc::now()),
+            IssuedToken::without_refresh("access".into(), mock_time_fn()),
             "scope".parse().unwrap(),
         );
 

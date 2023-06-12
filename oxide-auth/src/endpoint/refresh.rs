@@ -1,3 +1,4 @@
+use std::prelude::rust_2024::*;
 use std::borrow::Cow;
 use std::marker::PhantomData;
 use std::str::from_utf8;

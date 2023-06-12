@@ -65,7 +65,11 @@
 //! [`Scopes`]: endpoint/trait.Scopes.html
 #![warn(missing_docs)]
 
+#![no_std]
+extern crate sgx_tstd as std;
+
 pub mod code_grant;
 pub mod endpoint;
 pub mod frontends;
 pub mod primitives;
+pub mod helper;

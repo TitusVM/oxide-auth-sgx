@@ -3,8 +3,9 @@
 //! Internally similar to the authorization module, tokens generated here live longer and can be
 //! renewed. There exist two fundamental implementation as well, one utilizing in memory hash maps
 //! while the other uses cryptographic signing.
+use std::prelude::rust_2024::*;
 use std::collections::HashMap;
-use std::sync::{Arc, MutexGuard, RwLockWriteGuard};
+use std::sync::{Arc, SgxMutexGuard, SgxRwLockWriteGuard};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use chrono::{Duration, Utc};
@@ -13,6 +14,8 @@ use crate::{endpoint::PreGrant, code_grant::accesstoken::BearerToken};
 use super::Time;
 use super::grant::Grant;
 use super::generator::{TagGrant, TaggedAssertion, Assertion};
+
+use crate::helper::{ mock_time_fn, mock_time_fn_with_delay};
 
 /// Issuers create bearer tokens.
 ///
@@ -162,7 +165,7 @@ impl<G: TagGrant> TokenMap<G> {
 
     fn set_duration(&self, grant: &mut Grant) {
         if let Some(duration) = &self.duration {
-            grant.until = Utc::now() + *duration;
+            grant.until = mock_time_fn_with_delay(*duration);
         }
     }
 }
@@ -477,7 +480,7 @@ impl<I: Issuer + ?Sized> Issuer for Box<I> {
     }
 }
 
-impl<'s, I: Issuer + ?Sized> Issuer for MutexGuard<'s, I> {
+impl<'s, I: Issuer + ?Sized> Issuer for SgxMutexGuard<'s, I> {
     fn issue(&mut self, grant: Grant) -> Result<IssuedToken, ()> {
         (**self).issue(grant)
     }
@@ -495,7 +498,7 @@ impl<'s, I: Issuer + ?Sized> Issuer for MutexGuard<'s, I> {
     }
 }
 
-impl<'s, I: Issuer + ?Sized> Issuer for RwLockWriteGuard<'s, I> {
+impl<'s, I: Issuer + ?Sized> Issuer for SgxRwLockWriteGuard<'s, I> {
     fn issue(&mut self, grant: Grant) -> Result<IssuedToken, ()> {
         (**self).issue(grant)
     }
@@ -534,7 +537,7 @@ impl Issuer for TokenSigner {
 impl<'a> Issuer for &'a TokenSigner {
     fn issue(&mut self, mut grant: Grant) -> Result<IssuedToken, ()> {
         if let Some(duration) = &self.duration {
-            grant.until = Utc::now() + *duration;
+            grant.until = mock_time_fn_with_delay(*duration);
         }
 
         if self.have_refresh {
@@ -567,7 +570,7 @@ pub mod tests {
     use super::*;
     use crate::primitives::grant::Extensions;
     use crate::primitives::generator::RandomGenerator;
-    use chrono::{Duration, Utc};
+    use chrono::{Duration};
 
     fn grant_template() -> Grant {
         Grant {
@@ -575,7 +578,7 @@ pub mod tests {
             owner_id: "Owner".to_string(),
             redirect_uri: "https://example.com".parse().unwrap(),
             scope: "default".parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         }
     }
@@ -599,7 +602,7 @@ pub mod tests {
         assert_ne!(Some(&issued.token), issued.refresh.as_ref());
         assert_eq!(from_token.client_id, "Client");
         assert_eq!(from_token.owner_id, "Owner");
-        assert!(Utc::now() < from_token.until);
+        assert!(mock_time_fn().unwrap() < from_token.until);
 
         let issued_2 = issuer.issue(request).expect("Issuing failed");
         assert_ne!(issued.token, issued_2.token);

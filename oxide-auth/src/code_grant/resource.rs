@@ -1,9 +1,12 @@
 //! Provides the handling for Resource Requests.
 use std::{fmt, mem};
 use std::borrow::Cow;
+use std::prelude::rust_2024::*;
+
 
 use chrono::Utc;
 
+use crate::helper::mock_time_fn;
 use crate::primitives::issuer::Issuer;
 use crate::primitives::grant::Grant;
 use crate::primitives::scope::Scope;
@@ -307,7 +310,7 @@ fn recovered(grant: Option<Grant>, mut scopes: Vec<Scope>) -> Result<Grant> {
         }
     };
 
-    if grant.until < Utc::now() {
+    if grant.until < mock_time_fn() {
         return Err(Error::AccessDenied {
             failure: AccessFailure {
                 code: Some(ErrorCode::InvalidToken),
