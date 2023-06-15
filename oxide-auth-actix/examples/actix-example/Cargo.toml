@@ -7,13 +7,14 @@ edition = "2018"
 [dependencies]
 actix = "0.13"
 actix-web = "4.2.1"
-env_logger = "0.9"
-futures = "0.3"
-oxide-auth = { version = "0.5.0", path = "./../../../oxide-auth" }
-oxide-auth-actix = { version = "0.2.0", path = "./../../" }
+oxide-auth          = { version = "0.5.0", path = "./../../../oxide-auth" }
+oxide-auth-actix    = { version = "0.2.0", path = "./../../" }
+serde               = { git = "https://github.com/mesalock-linux/serde-sgx.git" }
+serde_json          = { git = "https://github.com/mesalock-linux/serde-json-sgx.git" }
+url                 = { git = "https://github.com/mesalock-linux/rust-url-sgx.git", features = ["serde", "sgx_tstd"]  }
+futures             = { version = "0.3", default-features = false }
+
+# env_logger = "0.9"
 reqwest = { version = "0.11.10", features = ["blocking"] }
-serde = "1.0"
-serde_json = "1.0"
-url = "2"
 serde_urlencoded = "0.7"
 tokio = "1.16.1"

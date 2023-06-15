@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use std::boxed::Box;
 use oxide_auth::endpoint::{OAuthError, Template, WebRequest, OwnerConsent, Solicitation, Scopes};
 
 pub use crate::code_grant::access_token::{Extension as AccessTokenExtension};

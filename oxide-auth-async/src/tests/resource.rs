@@ -1,9 +1,11 @@
+use std::prelude::rust_2024::*;
 use oxide_auth::primitives::issuer::TokenMap;
 use oxide_auth::primitives::generator::RandomGenerator;
 use oxide_auth::primitives::grant::{Grant, Extensions};
 use oxide_auth::{frontends::simple::endpoint::Error, primitives::scope::Scope, endpoint::WebRequest};
 
-use chrono::{Utc, Duration};
+use chrono::{Duration};
+use oxide_auth::helper::mock_time_fn_with_delay;
 
 use super::CraftedRequest;
 use super::defaults::*;
@@ -73,7 +75,7 @@ impl ResourceSetup {
             owner_id: EXAMPLE_OWNER_ID.to_string(),
             redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
             scope: "legit needed andmore".parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         }))
         .unwrap();
@@ -83,7 +85,7 @@ impl ResourceSetup {
             owner_id: EXAMPLE_OWNER_ID.to_string(),
             redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
             scope: "wrong needed".parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         }))
         .unwrap();
@@ -93,7 +95,7 @@ impl ResourceSetup {
             owner_id: EXAMPLE_OWNER_ID.to_string(),
             redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
             scope: "legit".parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         }))
         .unwrap();

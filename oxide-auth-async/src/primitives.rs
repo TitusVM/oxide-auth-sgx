@@ -1,4 +1,5 @@
 //! Async versions of all primitives traits.
+use std::prelude::rust_2024::*;
 use async_trait::async_trait;
 use oxide_auth::primitives::{grant::Grant, scope::Scope};
 use oxide_auth::primitives::issuer::{IssuedToken, RefreshedToken};

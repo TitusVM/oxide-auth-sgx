@@ -3,6 +3,11 @@
 //! Use the provided methods to use code grant methods in an asynchronous fashion, or use an
 //! `AsActor<_>` to create an actor implementing endpoint functionality via messages.
 #![warn(missing_docs)]
+#![no_std]
+
+extern crate sgx_tstd as std;
+
+use std::prelude::rust_2024::*;
 
 use actix::{MailboxError, Message};
 use actix_web::{
@@ -359,7 +364,7 @@ impl FromRequest for OAuthRequest {
     type Future = LocalBoxFuture<'static, Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
-        Self::new(req.clone(), payload.take()).boxed_local()
+        Self::new(req.clone(), payload.take(payload.size_of())).boxed_local()
     }
 }
 

@@ -1,3 +1,5 @@
+use std::prelude::rust_2024::*;
+use std::{vec, format};
 use oxide_auth::primitives::authorizer::AuthMap;
 use oxide_auth::primitives::registrar::{Client, ClientMap, RegisteredUrl};
 use oxide_auth::primitives::issuer::TokenMap;

@@ -1,4 +1,5 @@
 pub mod refresh {
+    use std::prelude::rust_2024::*;
     use oxide_auth::code_grant::refresh::{BearerToken, Error, Input, Output, Refresh, Request};
     use oxide_auth::primitives::{grant::Grant, registrar::RegistrarError};
 
@@ -78,6 +79,7 @@ pub mod refresh {
 }
 
 pub mod resource {
+    use std::prelude::rust_2024::*;
     use oxide_auth::code_grant::resource::{Error, Input, Output, Request, Resource};
     use oxide_auth::primitives::grant::Grant;
     use oxide_auth::primitives::scope::Scope;
@@ -129,10 +131,12 @@ pub mod resource {
 }
 
 pub mod client_credentials {
+    use std::prelude::rust_2024::*;
     use std::borrow::Cow;
 
     use async_trait::async_trait;
-    use chrono::{Utc, Duration};
+    use chrono::{Duration};
+    use oxide_auth::helper::mock_time_fn_with_delay;
     use oxide_auth::{
         code_grant::{
             accesstoken::{PrimitiveError, BearerToken},
@@ -217,7 +221,7 @@ pub mod client_credentials {
                     client_id: pre_grant.client_id,
                     redirect_uri: pre_grant.redirect_uri.into_url(),
                     scope: pre_grant.scope.clone(),
-                    until: Utc::now() + Duration::minutes(10),
+                    until: mock_time_fn_with_delay(Duration::minutes(10)),
                     extensions: self.extensions,
                 })
                 .await
@@ -344,6 +348,7 @@ pub mod client_credentials {
 }
 
 pub mod access_token {
+    use std::prelude::rust_2024::*;
     use async_trait::async_trait;
     use oxide_auth::{
         code_grant::accesstoken::{
@@ -477,8 +482,10 @@ pub mod access_token {
 }
 
 pub mod authorization {
+    use std::prelude::rust_2024::*;
     use async_trait::async_trait;
-    use chrono::{Duration, Utc};
+    use chrono::{Duration};
+    use oxide_auth::helper::mock_time_fn_with_delay;
     use oxide_auth::{
         code_grant::{
             authorization::{Authorization, Error, ErrorUrl, Input, Output, Request},
@@ -575,7 +582,7 @@ pub mod authorization {
                     client_id: self.pre_grant.client_id,
                     redirect_uri: self.pre_grant.redirect_uri.into(),
                     scope: self.pre_grant.scope,
-                    until: Utc::now() + Duration::minutes(10),
+                    until: mock_time_fn_with_delay(Duration::minutes(10)),
                     extensions: self.extensions,
                 })
                 .await

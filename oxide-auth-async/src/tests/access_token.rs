@@ -1,3 +1,5 @@
+use std::prelude::rust_2024::*;
+use std::{vec, format};
 use oxide_auth::primitives::authorizer::AuthMap;
 use oxide_auth::primitives::issuer::TokenMap;
 use oxide_auth::primitives::grant::{Grant, Extensions};
@@ -15,7 +17,8 @@ use crate::{
 
 use std::collections::HashMap;
 
-use chrono::{Utc, Duration};
+use chrono::{Duration};
+use oxide_auth::helper::mock_time_fn_with_delay;
 
 use super::{Body, CraftedRequest, CraftedResponse, Status, TestGenerator, ToSingleValueQuery};
 use super::defaults::*;
@@ -98,7 +101,7 @@ impl AccessTokenSetup {
             owner_id: EXAMPLE_OWNER_ID.to_string(),
             redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
             scope: EXAMPLE_SCOPE.parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         };
 
@@ -133,7 +136,7 @@ impl AccessTokenSetup {
             owner_id: EXAMPLE_OWNER_ID.to_string(),
             redirect_uri: EXAMPLE_REDIRECT_URI.parse().unwrap(),
             scope: EXAMPLE_SCOPE.parse().unwrap(),
-            until: Utc::now() + Duration::hours(1),
+            until: mock_time_fn_with_delay(Duration::hours(1)),
             extensions: Extensions::new(),
         };
 
@@ -282,7 +285,7 @@ fn access_equivalent_url() {
         owner_id: EXAMPLE_OWNER_ID.to_string(),
         redirect_uri: REDIRECT_URL.parse().unwrap(),
         scope: EXAMPLE_SCOPE.parse().unwrap(),
-        until: Utc::now() + Duration::hours(1),
+        until: mock_time_fn_with_delay(Duration::hours(1)),
         extensions: Extensions::new(),
     };
 

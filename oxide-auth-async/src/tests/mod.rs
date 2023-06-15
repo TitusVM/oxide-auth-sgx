@@ -1,3 +1,5 @@
+use std::prelude::rust_2024::*;
+use std::vec;
 use std::borrow::Cow;
 use std::collections::HashMap;
 

@@ -1,3 +1,4 @@
+use std::prelude::rust_2024::*;
 use std::{marker::PhantomData, borrow::Cow};
 
 use oxide_auth::code_grant::resource::{Error as ResourceError, Request as ResourceRequest};

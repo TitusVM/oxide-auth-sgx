@@ -1,3 +1,6 @@
+use std::string::String;
+use std::string::ToString;
+use std::vec::Vec;
 use std::borrow::Cow;
 use std::str::from_utf8;
 use std::marker::PhantomData;

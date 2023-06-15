@@ -1,3 +1,4 @@
+use std::prelude::rust_2024::*;
 use std::{borrow::Cow, marker::PhantomData};
 
 use oxide_auth::{

@@ -1,6 +1,7 @@
 [workspace]
 members = [
 	"oxide-auth",
+	"oxide-auth-async",
 ]
 
 # Patches need to be declared at workspace root 
